@@ -17,7 +17,11 @@ func startRepl() {
 	var command string
 	for {
 		fmt.Print("Pokedex > ")
-		scanner.Scan()
+
+		if !scanner.Scan() {
+			break
+		}
+
 		input := scanner.Text()
 		words := cleanInput(input)
 
@@ -27,5 +31,8 @@ func startRepl() {
 		}
 		command = words[0]
 		fmt.Printf("Your command was: %s\n", command)
+	}
+	if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "Error reading input:", err)
 	}
 }
