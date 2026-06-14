@@ -14,19 +14,18 @@ func cleanInput(text string) []string {
 
 func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
-	var input string
 	var command string
 	for {
 		fmt.Print("Pokedex > ")
-		for scanner.Scan() {
-			input = scanner.Text()
-			words := cleanInput(input)
-			command = words[0]
-			fmt.Println("your command was: " + command)
-			break
+		scanner.Scan()
+		input := scanner.Text()
+		words := cleanInput(input)
+
+		//skip if the input is empty
+		if len(words) == 0 {
+			continue
 		}
-		if err := scanner.Err(); err != nil {
-			fmt.Fprintln(os.Stderr, "reading standard input:", err)
-		}
+		command = words[0]
+		fmt.Printf("Your command was: %s\n", command)
 	}
 }
