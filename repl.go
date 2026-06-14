@@ -14,7 +14,6 @@ func cleanInput(text string) []string {
 
 func startRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
-	var command string
 	for {
 		fmt.Print("Pokedex > ")
 
@@ -29,8 +28,13 @@ func startRepl() {
 		if len(words) == 0 {
 			continue
 		}
-		command = words[0]
-		fmt.Printf("Your command was: %s\n", command)
+		command, exists := commandRegistry[words[0]]
+		if exists {
+			err := command.callback()
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Error executing command:", err)
+			}
+		}
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading input:", err)
