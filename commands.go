@@ -6,19 +6,17 @@ type cliCommand struct {
 	callback    func() error
 }
 
-var commandRegistry map[string]cliCommand = map[string]cliCommand{}
-
-func initCommands() {
-
-	commandRegistry["help"] = cliCommand{
-		name:        "help",
-		description: "Displays a help message",
-		callback:    commandHelp,
-	}
-
-	commandRegistry["exit"] = cliCommand{
-		name:        "exit",
-		description: "Exit the Pokedex",
-		callback:    commandExit,
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
 	}
 }

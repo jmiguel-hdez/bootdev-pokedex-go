@@ -28,12 +28,16 @@ func startRepl() {
 		if len(words) == 0 {
 			continue
 		}
-		command, exists := commandRegistry[words[0]]
+		commandName := words[0]
+		command, exists := getCommands()[commandName]
 		if exists {
 			err := command.callback()
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "Error executing command:", err)
 			}
+			continue
+		} else {
+			fmt.Println("Unknown command")
 		}
 	}
 	if err := scanner.Err(); err != nil {
