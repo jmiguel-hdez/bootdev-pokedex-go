@@ -3,17 +3,23 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/jmiguel-hdez/bootdev-pokedex-go/internal/pokeapi"
 	"os"
 	"strings"
 )
+
+type config struct {
+	pokeapiClient   pokeapi.Client
+	nextLocationURL *string
+	prevLocationURL *string
+}
 
 func cleanInput(text string) []string {
 	lowercase_text := strings.ToLower(text)
 	return strings.Fields(lowercase_text)
 }
 
-func startRepl() {
-	var config Config
+func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -32,9 +38,9 @@ func startRepl() {
 		commandName := words[0]
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(&config)
+			err := command.callback(cfg)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, "Error executing command:", err)
+				fmt.Println(err)
 			}
 			continue
 		} else {
@@ -42,6 +48,6 @@ func startRepl() {
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "Error reading input:", err)
+		fmt.Println(err)
 	}
 }

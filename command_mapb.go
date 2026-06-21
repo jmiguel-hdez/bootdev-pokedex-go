@@ -3,25 +3,26 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/jmiguel-hdez/bootdev-pokedex-go/internal/pokedex"
 )
 
-func commandMapb(config *Config) error {
-	if config == nil {
+func commandMapb(cfg *config) error {
+	if cfg == nil {
 		return errors.New("config can't be nil")
 	}
-	if config.Previous == "" {
-		fmt.Println("you're on the first page")
-		return nil
+
+	if cfg.prevLocationURL == nil || *cfg.prevLocationURL == "" {
+		return errors.New("you're on the first page")
 	}
-	locations, err := pokedex.Mapb(config.Previous)
+
+	locations, err := cfg.pokeapiClient.ListLocations(cfg.prevLocationURL)
 	if err != nil {
 		return err
 	}
+	cfg.nextLocationURL = locations.Next
+	cfg.prevLocationURL = locations.Previous
+
 	for _, loc := range locations.Results {
 		fmt.Println(loc.Name)
 	}
-	config.Next = locations.Next
-	config.Previous = locations.Previous
 	return nil
 }
