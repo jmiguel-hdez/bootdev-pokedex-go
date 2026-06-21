@@ -10,7 +10,7 @@ func commandMapb(cfg *config) error {
 		return errors.New("config can't be nil")
 	}
 
-	if cfg.prevLocationURL == nil || *cfg.prevLocationURL == "" {
+	if cfg.prevLocationURL == nil {
 		return errors.New("you're on the first page")
 	}
 
