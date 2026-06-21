@@ -13,6 +13,7 @@ func cleanInput(text string) []string {
 }
 
 func startRepl() {
+	var config Config
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("Pokedex > ")
@@ -31,7 +32,7 @@ func startRepl() {
 		commandName := words[0]
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback()
+			err := command.callback(&config)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "Error executing command:", err)
 			}
