@@ -6,10 +6,8 @@ import (
 )
 
 type Cache struct {
-	cache    map[string]cacheEntry
-	mu       sync.Mutex
-	interval time.Duration
-	ticker   *time.Ticker
+	cache map[string]cacheEntry
+	mu    *sync.Mutex
 }
 
 type cacheEntry struct {
@@ -17,12 +15,12 @@ type cacheEntry struct {
 	val       []byte
 }
 
-func NewCache(interval time.Duration) *Cache {
-	cache := Cache{cache: map[string]cacheEntry{}, mu: sync.Mutex{}, interval: interval, ticker: time.NewTicker(interval)}
+func NewCache(interval time.Duration) Cache {
+	cache := Cache{cache: map[string]cacheEntry{}, mu: &sync.Mutex{}}
 
-	go cache.reapLoop()
+	go cache.reapLoop(interval)
 
-	return &cache
+	return cache
 }
 
 // use sync.Mutex as appropiate
@@ -30,7 +28,7 @@ func NewCache(interval time.Duration) *Cache {
 func (c *Cache) Add(key string, val []byte) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.cache[key] = cacheEntry{createdAt: time.Now(), val: val}
+	c.cache[key] = cacheEntry{createdAt: time.Now().UTC(), val: val}
 }
 
 // Create a cache.Get() method that gets an entry from the cache.
@@ -49,13 +47,22 @@ func (c *Cache) Get(key string) ([]byte, bool) {
 // This makes sure that the cache doesn't grow too large over time. For example, if the interval is 5 seconds, and an entry was added 7 seconds ago, that entry should be removed.
 // I used a time.Ticker to make this happen. If you want addition help, see the Tips section below
 // use sync.Mutex as appropiate
-func (c *Cache) reapLoop() {
-	for t := range c.ticker.C {
-		for k, e := range c.cache {
-			delta := t.Sub(e.createdAt)
-			if delta >= c.interval {
-				delete(c.cache, k)
-			}
+func (c *Cache) reapLoop(interval time.Duration) {
+	ticker := time.NewTicker(interval)
+	for range ticker.C {
+		c.reap(time.Now().UTC(), interval)
+	}
+}
+
+func (c *Cache) reap(now time.Time, last time.Duration) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	for k, e := range c.cache {
+		delta := now.Sub(e.createdAt)
+		if delta >= last {
+			delete(c.cache, k)
 		}
 	}
+
 }
