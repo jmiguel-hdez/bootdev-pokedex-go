@@ -1,6 +1,7 @@
 package pokecache
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -17,13 +18,13 @@ func TestAddGet(t *testing.T) {
 			val: []byte("testdata"),
 		},
 		{
-			key: "http://www.example.com/",
+			key: "http://www.example.com/path",
 			val: []byte("moredatatotest"),
 		},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.key, func(t *testing.T) {
+	for i, tc := range cases {
+		t.Run(fmt.Sprintf("Test case %v", i), func(t *testing.T) {
 			cache := NewCache(interval)
 			cache.Add(tc.key, tc.val)
 
