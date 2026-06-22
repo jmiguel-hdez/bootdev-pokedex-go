@@ -59,8 +59,7 @@ func (c *Cache) reap(now time.Time, last time.Duration) {
 	defer c.mu.Unlock()
 
 	for k, e := range c.cache {
-		delta := now.Sub(e.createdAt)
-		if delta >= last {
+		if e.createdAt.Before(now.Add(-last)) {
 			delete(c.cache, k)
 		}
 	}
