@@ -45,7 +45,7 @@ func startRepl(cfg *config) {
 		}
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback(cfg, args)
+			err := command.callback(cfg, args...)
 			if err != nil {
 				fmt.Println(err)
 			}

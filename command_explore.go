@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
-func commandExplore(cfg *config, args []string) error {
+func commandExplore(cfg *config, args ...string) error {
 	if cfg == nil {
 		return errors.New("config argument can't be nil")
 	}
-	if len(args) < 1 {
+	if len(args) != 1 {
 		return errors.New("explore needs an argument")
 	}
 	name := args[0]

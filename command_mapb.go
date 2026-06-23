@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func commandMapb(cfg *config, args []string) error {
+func commandMapb(cfg *config, args ...string) error {
 	if cfg == nil {
 		return errors.New("config can't be nil")
 	}
