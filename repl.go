@@ -12,6 +12,7 @@ type config struct {
 	pokeapiClient   pokeapi.Client
 	nextLocationURL *string
 	prevLocationURL *string
+	pokedex         map[string]pokeapi.Pokemon
 }
 
 func cleanInput(text string) []string {
